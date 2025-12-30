@@ -313,8 +313,8 @@ erDiagram
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/shahanth4444/Multi-Tenant-SaaS-Platform.git
-cd Multi-Tenant-SaaS-Platform
+git clone https://github.com/shahanth4444/multi-tenant-saas.git
+cd multi-tenant-saas
 ```
 
 2. **Start with Docker Compose**
@@ -550,7 +550,7 @@ Expected response:
 ## 📁 Project Structure
 
 ```
-Multi-Tenant-SaaS-Platform/
+multi-tenant-saas/
 ├── backend/
 │   ├── src/
 │   │   ├── config.js              # Configuration
