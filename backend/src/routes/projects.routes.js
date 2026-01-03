@@ -1,3 +1,12 @@
+/**
+ * Project Management Routes
+ * 
+ * Defines routes for project CRUD operations with tenant isolation.
+ * Includes filtering, pagination, and search capabilities.
+ * 
+ * @module routes/projects
+ */
+
 import express from 'express';
 import { auth } from '../middleware/auth.js';
 import { body, query } from 'express-validator';
@@ -9,13 +18,13 @@ const router = express.Router();
 router.post('/', auth,
   body('name').isString().isLength({ min: 2 }),
   body('description').optional().isString(),
-  body('status').optional().isIn(['active','archived','completed']),
+  body('status').optional().isIn(['active', 'archived', 'completed']),
   validate,
   createProject
 );
 
 router.get('/', auth,
-  query('status').optional().isIn(['active','archived','completed']),
+  query('status').optional().isIn(['active', 'archived', 'completed']),
   query('search').optional().isString(),
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
@@ -26,7 +35,7 @@ router.get('/', auth,
 router.put('/:projectId', auth,
   body('name').optional().isString(),
   body('description').optional().isString(),
-  body('status').optional().isIn(['active','archived','completed']),
+  body('status').optional().isIn(['active', 'archived', 'completed']),
   validate,
   updateProject
 );
