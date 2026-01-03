@@ -1,5 +1,15 @@
+# Docker Compose Configuration for Multi-Tenant SaaS Platform
+# 
+# This file defines three services:
+# 1. PostgreSQL database with health checks
+# 2. Node.js backend API with automatic database seeding
+# 3. React frontend with Vite dev server
+
 version: '3.8'
+
 services:
+  # PostgreSQL Database Service
+  # Stores all application data with tenant isolation
   database:
     image: postgres:15
     container_name: database
@@ -10,19 +20,22 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data  # Persist database data
     healthcheck:
+      # Ensure database is ready before starting dependent services
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 10
 
+  # Backend API Service
+  # Express.js server with JWT authentication and RBAC
   backend:
     build: ./backend
     container_name: backend
     depends_on:
       database:
-        condition: service_healthy
+        condition: service_healthy  # Wait for database to be ready
     environment:
       DB_HOST: database
       DB_PORT: 5432
@@ -34,25 +47,29 @@ services:
       PORT: 5000
       NODE_ENV: development
       FRONTEND_URL: http://localhost:3000
-      SEED_ON_START: "true"
+      SEED_ON_START: "true"  # Automatically seed database on startup
     ports:
       - "5000:5000"
     healthcheck:
+      # Verify API server is responding
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 10s
       timeout: 5s
       retries: 10
 
+  # Frontend Service
+  # React application with Vite dev server
   frontend:
     build: ./frontend
     container_name: frontend
     depends_on:
       backend:
-        condition: service_healthy
+        condition: service_healthy  # Wait for backend to be ready
     environment:
       REACT_APP_API_URL: http://localhost:5000/api
     ports:
       - "3000:3000"
 
+# Persistent volumes for database data
 volumes:
   db_data:
