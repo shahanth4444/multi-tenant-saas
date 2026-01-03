@@ -1,3 +1,12 @@
+/**
+ * Authentication Routes
+ * 
+ * Defines routes for user authentication and tenant registration.
+ * Includes input validation for all endpoints.
+ * 
+ * @module routes/auth
+ */
+
 import express from 'express';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validate.js';
