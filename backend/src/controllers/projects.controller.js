@@ -1,7 +1,20 @@
+/**
+ * Project Management Controller
+ * 
+ * Handles project CRUD operations with tenant isolation and subscription limits.
+ * Tenant admins can create/update/delete projects, users can view projects.
+ * 
+ * @module controllers/projects
+ */
+
 import { query } from '../db.js';
 import { created, ok, forbidden, notFound } from '../utils/responses.js';
 import { auditLog } from '../utils/audit.js';
 
+/**
+ * Check if user is tenant admin
+ * @private
+ */
 function isTenantAdmin(req) { return req.user?.role === 'tenant_admin'; }
 
 export async function createProject(req, res, next) {
@@ -58,7 +71,7 @@ export async function listProjects(req, res, next) {
        JOIN users u ON u.id = p.created_by
        WHERE ${where}
        ORDER BY p.created_at DESC
-       LIMIT $${params.length+1} OFFSET $${params.length+2}`,
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
       [...params, l, offset]
     );
 
