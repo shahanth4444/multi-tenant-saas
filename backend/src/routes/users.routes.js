@@ -1,3 +1,12 @@
+/**
+ * User Management Routes
+ * 
+ * Defines routes for user CRUD operations within tenants.
+ * Tenant admins can manage users in their tenant.
+ * 
+ * @module routes/users
+ */
+
 import express from 'express';
 import { auth } from '../middleware/auth.js';
 import { body, query } from 'express-validator';
@@ -10,14 +19,14 @@ router.post('/tenants/:tenantId/users', auth,
   body('email').isEmail(),
   body('password').isString().isLength({ min: 8 }),
   body('fullName').isString().isLength({ min: 2 }),
-  body('role').optional().isIn(['user','tenant_admin']),
+  body('role').optional().isIn(['user', 'tenant_admin']),
   validate,
   addUser
 );
 
 router.get('/tenants/:tenantId/users', auth,
   query('search').optional().isString(),
-  query('role').optional().isIn(['user','tenant_admin','super_admin']),
+  query('role').optional().isIn(['user', 'tenant_admin', 'super_admin']),
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
   validate,
@@ -26,7 +35,7 @@ router.get('/tenants/:tenantId/users', auth,
 
 router.put('/:userId', auth,
   body('fullName').optional().isString().isLength({ min: 2 }),
-  body('role').optional().isIn(['user','tenant_admin']),
+  body('role').optional().isIn(['user', 'tenant_admin']),
   body('isActive').optional().isBoolean(),
   validate,
   updateUser
