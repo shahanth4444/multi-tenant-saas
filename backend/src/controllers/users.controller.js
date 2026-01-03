@@ -1,9 +1,27 @@
+/**
+ * User Management Controller
+ * 
+ * Handles user CRUD operations within tenants with subscription limit enforcement.
+ * Tenant admins can manage users within their tenant.
+ * 
+ * @module controllers/users
+ */
+
 import bcrypt from 'bcrypt';
 import { query } from '../db.js';
 import { created, ok, conflict, forbidden, notFound, badRequest } from '../utils/responses.js';
 import { auditLog } from '../utils/audit.js';
 
+/**
+ * Check if user is super admin
+ * @private
+ */
 function isSuper(req) { return req.user?.role === 'super_admin'; }
+
+/**
+ * Check if user is tenant admin
+ * @private
+ */
 function isTenantAdmin(req) { return req.user?.role === 'tenant_admin'; }
 
 export async function addUser(req, res, next) {
@@ -67,7 +85,7 @@ export async function listUsers(req, res, next) {
       `SELECT id, email, full_name, role, is_active, created_at
        FROM users WHERE ${where}
        ORDER BY created_at DESC
-       LIMIT $${params.length+1} OFFSET $${params.length+2}`,
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
       [...params, l, offset]
     );
     const count = await query(`SELECT COUNT(*)::int AS c FROM users WHERE ${where}`, params);
