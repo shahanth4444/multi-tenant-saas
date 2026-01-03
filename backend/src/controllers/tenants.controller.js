@@ -1,7 +1,20 @@
+/**
+ * Tenant Management Controller
+ * 
+ * Handles tenant CRUD operations, subscription management, and statistics.
+ * Super admins can manage all tenants, tenant admins can update their own tenant name.
+ * 
+ * @module controllers/tenants
+ */
+
 import { query, withTransaction } from '../db.js';
 import { ok, notFound, forbidden, badRequest } from '../utils/responses.js';
 import { auditLog } from '../utils/audit.js';
 
+/**
+ * Check if user is super admin
+ * @private
+ */
 function isSuper(req) { return req.user?.role === 'super_admin'; }
 
 export async function getTenantDetails(req, res, next) {
@@ -74,7 +87,7 @@ export async function listTenants(req, res, next) {
     if (plan) { params.push(plan); where.push(`subscription_plan = $${params.length}`); }
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-    const listSql = `SELECT id, name, subdomain, status, subscription_plan, created_at FROM tenants ${whereSql} ORDER BY created_at DESC LIMIT $${params.length+1} OFFSET $${params.length+2}`;
+    const listSql = `SELECT id, name, subdomain, status, subscription_plan, created_at FROM tenants ${whereSql} ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
     const { rows } = await query(listSql, params);
 
