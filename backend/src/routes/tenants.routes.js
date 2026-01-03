@@ -1,3 +1,12 @@
+/**
+ * Tenant Management Routes
+ * 
+ * Defines routes for tenant CRUD operations with role-based access control.
+ * Super admins can list and manage all tenants.
+ * 
+ * @module routes/tenants
+ */
+
 import express from 'express';
 import { auth } from '../middleware/auth.js';
 import { body, query as q } from 'express-validator';
@@ -12,8 +21,8 @@ router.get('/:tenantId', auth, ensureTenantAccess, getTenantDetails);
 
 router.put('/:tenantId', auth,
   body('name').optional().isString(),
-  body('status').optional().isIn(['active','suspended','trial']),
-  body('subscriptionPlan').optional().isIn(['free','pro','enterprise']),
+  body('status').optional().isIn(['active', 'suspended', 'trial']),
+  body('subscriptionPlan').optional().isIn(['free', 'pro', 'enterprise']),
   body('maxUsers').optional().isInt({ min: 1 }),
   body('maxProjects').optional().isInt({ min: 1 }),
   validate,
@@ -23,8 +32,8 @@ router.put('/:tenantId', auth,
 router.get('/', auth, requireRole('super_admin'),
   q('page').optional().isInt({ min: 1 }),
   q('limit').optional().isInt({ min: 1, max: 100 }),
-  q('status').optional().isIn(['active','suspended','trial']),
-  q('subscriptionPlan').optional().isIn(['free','pro','enterprise']),
+  q('status').optional().isIn(['active', 'suspended', 'trial']),
+  q('subscriptionPlan').optional().isIn(['free', 'pro', 'enterprise']),
   validate,
   listTenants
 );
